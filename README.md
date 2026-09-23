@@ -15,3 +15,7 @@ Clone capsule art was generated to the brief in `capsules/SPEC.md`, which follow
 ## Hosting
 
 GitHub Pages (Actions deploy of `site/`), custom domain `haystack.jethachan.net`, fronted by Cloudflare: a proxied `CNAME haystack → jethac.github.io`. Cloudflare terminates HTTPS, so GitHub's "Enforce HTTPS" stays off.
+
+## License
+
+MIT (see `LICENSE`) for the code and the generated clone art. Not covered: the real game's Steam capsule (`capsules/original.jpg`, © Studio Bitdot / Polden Publishing) and the screenshot of Nas Nakarus's post (`assets/tweet.png`). Those belong to their owners and are included for commentary.
