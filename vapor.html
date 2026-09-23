@@ -1,0 +1,672 @@
+<title>Find the Original</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&family=Lilita+One&family=Luckiest+Guy&family=MedievalSharp&family=Rye&family=VT323&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --mast:#131a24; --page:#1a2433; --row:#16202d; --row-hi:#223549; --line:#2a3a4d;
+  --text:#c3d0dc; --dim:#8196ab; --bright:#eef4f8; --link:#63b9ec;
+  --btn:#23445e; --btn-text:#6cc2f2;
+  --buy-a:#75b022; --buy-b:#588a1b; --disc-bg:#4c6b22; --disc:#beee11;
+  --alarm:#d1261c; --hay:#e8b54a; --sierra:#a80000;
+  --f-ui:"Barlow",Arial,Helvetica,sans-serif;
+  --f-cond:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-pixel:"VT323","Courier New",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font:14px/1.45 var(--f-ui)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--btn-text);outline-offset:2px}
+.wrap{max-width:1100px;margin-inline:auto;padding-inline:16px}
+
+/* masthead */
+.mast{background:var(--mast)}
+.mast-in{display:flex;align-items:center;gap:40px;min-height:96px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;color:#dfe8ef;background:none;border:0;padding:0;font:700 31px/1 var(--f-cond);letter-spacing:.08em}
+.mnav{display:flex;gap:24px}
+.mnav button{background:none;border:0;padding:6px 0 4px;font:600 16px/1 var(--f-cond);letter-spacing:.05em;color:#dcdedf;border-bottom:3px solid transparent}
+.mnav button:hover{color:#fff}
+.mnav button.on{color:var(--link);border-color:var(--link)}
+.mright{margin-left:auto;align-self:flex-start;padding-top:8px;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--dim)}
+.mright .lnk{background:none;border:0;padding:0;color:var(--dim);font-size:12px}
+.mright .lnk:hover{color:#fff}
+.install{background:#5c7e10;color:#d2efa9;border:0;padding:4px 10px;font-size:12px}
+
+/* store nav */
+.snav{display:flex;align-items:center;gap:12px;height:40px;padding-inline:8px;background:linear-gradient(90deg,#2b5378 0%,#33668d 45%,#1a2e6a 100%);box-shadow:0 0 3px rgba(0,0,0,.4)}
+.snav-links{display:flex;gap:4px}
+.snav-links button{background:none;border:0;color:#e5e5e5;font-weight:500;padding:6px 10px}
+.snav-links button:hover{background:rgba(255,255,255,.08)}
+
+/* objective band */
+.band{background:linear-gradient(180deg,#244664 0%,var(--page) 100%)}
+.band-in{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 32px;padding-block:22px 18px}
+.mission{flex:1 1 360px;min-width:0}
+.m-label{display:inline-block;background:var(--alarm);color:#fff;font:700 11px/1 var(--f-cond);letter-spacing:.14em;padding:4px 7px}
+.m-target{font:700 28px/1.1 var(--f-cond);color:var(--bright);margin-top:8px;text-wrap:balance}
+.m-sub{color:#9fb6c9;margin-top:4px}
+.stats{display:flex;gap:24px;margin:0}
+.stats div{display:flex;flex-direction:column-reverse}
+.stats dt{font:600 11px var(--f-cond);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.stats dd{margin:0;font:600 26px/1 var(--f-cond);color:var(--bright);font-variant-numeric:tabular-nums}
+
+/* search */
+.grid{padding-block:12px 40px}
+.qbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:rgba(0,0,0,.22);padding:10px}
+.query{color:#fff;font-size:15px}
+.btn{background:var(--btn);color:var(--btn-text);border:0;padding:6px 16px;border-radius:2px}
+.btn:hover{background:#67c1f5;color:#fff}
+.sortwrap{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--dim);font-size:13px}
+.sortwrap select{background:#23445e;border:0;color:var(--btn-text);padding:5px 8px}
+.count{padding:10px;color:#c7d5e0;font-size:13px;background:rgba(0,0,0,.12);margin-block:4px 6px}
+.list{display:flex;flex-direction:column;gap:5px}
+.row{display:grid;grid-template-columns:184px minmax(0,1fr) 128px 116px;grid-template-areas:"cap info rel price";align-items:center;gap:0 12px;width:100%;min-height:69px;text-align:left;background:var(--row);border:0;padding:0 12px 0 0;color:var(--text)}
+.row:hover{background:var(--row-hi)}
+.row:hover .title{color:#fff}
+.cap{grid-area:cap;display:block;width:184px;max-width:100%;aspect-ratio:462/174;background:#0e141b;overflow:hidden}
+.cap svg,.cap img{display:block;width:100%;height:100%;object-fit:cover}
+.info{grid-area:info;display:flex;flex-direction:column;gap:6px;min-width:0;padding-block:6px}
+.title{font-size:15px;color:#c7d5e0;overflow-wrap:anywhere}
+.meta{display:flex;gap:6px;align-items:center;color:#8f98a0}
+.seen-tag{font:600 10px/1 var(--f-cond);letter-spacing:.1em;background:#3b2a2a;color:#e7a39b;padding:3px 5px}
+.rel{grid-area:rel;font-size:12px;color:#8f98a0;text-align:right}
+.price{grid-area:price;display:flex;justify-content:flex-end;font-size:12px;color:#c7d5e0}
+.disc{display:flex;align-items:stretch}
+.pct{background:var(--disc-bg);color:var(--disc);font-weight:700;font-size:15px;padding:3px 5px;display:grid;place-items:center}
+.pp{display:flex;flex-direction:column;background:#344654;padding:2px 6px;line-height:1.1;text-align:right}
+.pp s{color:#738895;font-size:11px}
+.pp b{color:var(--disc);font-weight:500}
+.empty{padding:30px 10px;color:var(--dim);text-align:center}
+
+footer{border-top:1px solid #0e141b;background:var(--mast);color:#61686d;font-size:12px;padding-block:18px 150px}
+footer p{margin:0;max-width:75ch}
+footer a{color:#8196ab}
+
+/* the giant clock */
+.bigclock{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:15;pointer-events:none;text-align:right;color:#fff;text-shadow:0 3px 0 #000,0 0 24px rgba(0,0,0,.7)}
+.bigclock .num{font:700 clamp(60px,11vw,128px)/.85 var(--f-cond);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.bigclock .lbl{font:700 13px/1 var(--f-cond);letter-spacing:.24em;color:var(--hay);margin-top:6px}
+.bigclock.paused .num{color:#9fb6c9}
+.bigclock.done .num{color:var(--disc)}
+
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;max-width:calc(100% - 32px);background:#0c1117;border:1px solid #33475c;color:var(--bright);padding:10px 16px;box-shadow:0 6px 24px rgba(0,0,0,.5);transition:opacity .2s}
+.toast.off{opacity:0;pointer-events:none}
+
+/* the narrator: a Sierra text box */
+.narr{position:fixed;left:50%;top:26%;transform:translateX(-50%);z-index:35;width:min(540px,calc(100% - 32px));background:#fff;color:#111;padding:22px 26px 18px;font:26px/1.12 var(--f-pixel);cursor:pointer;
+  box-shadow:inset 0 0 0 4px #fff,inset 0 0 0 8px var(--sierra),10px 10px 0 rgba(0,0,0,.55)}
+.narr .who{display:block;font-size:17px;letter-spacing:.14em;color:var(--sierra);margin-bottom:6px}
+.narr .more{display:block;text-align:right;font-size:16px;color:#777;margin-top:8px}
+
+/* modals */
+.scrim{position:fixed;inset:0;z-index:25;background:rgba(6,10,16,.8);display:flex;flex-direction:column;overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.modal{width:min(760px,100%);background:var(--mast);border:1px solid #33475c;box-shadow:0 24px 70px rgba(0,0,0,.65)}
+/* margin:auto centres a modal that fits and top-aligns one that doesn't, so its top is always reachable */
+.scrim>.modal{margin:auto;flex:none}
+.intro{width:min(900px,100%);display:grid;grid-template-columns:324px minmax(0,1fr);align-items:start}
+.tweet{background:#0e141b;padding:12px;min-height:100%}
+.tweet a{display:block;max-width:300px;margin:0 auto;border-radius:12px;overflow:hidden}
+.tweet img{display:block;width:100%;height:auto}
+.intro-body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:12px}
+.intro .disclaim{font-size:12px;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.intro h2{margin:0;font:700 34px/1.05 var(--f-cond);color:#fff;text-wrap:balance}
+.intro p{margin:0;max-width:62ch;color:#b8c7d4;font-size:15px}
+.lamp{border-left:3px solid var(--alarm);padding-left:12px;color:#eef4f8 !important}
+.lamp b{color:#fff}
+.green{border:0;border-radius:2px;background:linear-gradient(to right,var(--buy-a) 5%,var(--buy-b) 95%);color:#d2efa9;padding:8px 16px;font-size:15px}
+.green:hover{background:linear-gradient(to right,#8ed629 5%,#6aa621 95%);color:#fff}
+.big{font-size:18px;padding:12px 22px;align-self:flex-start}
+.res-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#0e141b}
+.verdict{font:700 13px/1 var(--f-cond);letter-spacing:.2em;padding:6px 9px;color:#fff;background:var(--alarm)}
+.verdict.good{background:var(--disc-bg);color:var(--disc)}
+.x{background:none;border:0;color:#8196ab;font-size:26px;line-height:1;padding:0 4px}
+.x:hover{color:#fff}
+.res-body{padding:18px;display:flex;flex-direction:column;gap:12px}
+.res-body h2{margin:0;font:700 28px/1.1 var(--f-cond);color:#fff;overflow-wrap:anywhere;text-wrap:balance}
+.res-body p{margin:0;color:#b8c7d4;max-width:65ch}
+.res-body p a{color:var(--disc)}
+.shot{margin:0;background:#0e141b;border:1px solid #2a3a4d}
+.shot img{display:block;width:100%;height:auto;aspect-ratio:1200/675}
+.shot figcaption{font-size:12px;color:var(--dim);padding:6px 10px}
+.share{display:flex;flex-wrap:wrap;gap:8px}
+.share a,.share button{display:inline-flex;align-items:center;gap:6px;background:var(--btn);color:var(--btn-text);border:0;padding:7px 12px;font-size:13px;text-decoration:none;border-radius:2px}
+.share a:hover,.share button:hover{background:#67c1f5;color:#fff}
+.share a.ico{padding:7px 10px}
+.res-act{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.home{font-size:13px;color:var(--dim)}
+.home a{color:var(--hay);font-weight:600}
+
+@media (max-width:820px){
+  .intro{grid-template-columns:minmax(0,1fr)}
+  .tweet{padding:8px}
+  .mnav,.mright{display:none}
+  .snav-links{overflow-x:auto}
+  .mast-in{min-height:64px}
+}
+@media (max-width:560px){
+  .row{grid-template-columns:120px minmax(0,1fr);grid-template-areas:"cap info" "cap rel" "cap price";padding:6px 8px 6px 0;align-items:start}
+  .cap{width:120px}
+  .rel,.price{text-align:left;justify-content:flex-start}
+  .info{padding-block:0}
+  .title{font-size:14px}
+  .m-target{font-size:23px}
+  .sortwrap{margin-left:0}
+  .intro h2{font-size:28px}
+  .narr{font-size:22px;top:18%}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <button class="brand" id="home" aria-label="VAPOR home">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true" id="logo"><defs><clipPath id="logoclip"><circle cx="20" cy="20" r="19"/></clipPath><filter id="logosmoke" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.1"/></filter></defs><circle cx="20" cy="20" r="19" fill="#c7d5e0"/><g clip-path="url(#logoclip)"><g filter="url(#logosmoke)"><circle cx="25.4" cy="13.2" r="3" fill="#7d90a3"/><circle cx="27.6" cy="10" r="4.1" fill="#7d90a3" opacity=".95"/><circle cx="24.4" cy="8.2" r="3.4" fill="#7d90a3" opacity=".85"/><circle cx="30.8" cy="12.4" r="3" fill="#7d90a3" opacity=".75"/><circle cx="28.2" cy="5.4" r="3.3" fill="#7d90a3" opacity=".7"/><circle cx="32.2" cy="7.8" r="2.8" fill="#7d90a3" opacity=".6"/><circle cx="22.4" cy="5" r="2.6" fill="#7d90a3" opacity=".5"/><circle cx="26.6" cy="11.2" r="2.4" fill="#5a6e82" opacity=".8"/><circle cx="28.6" cy="7.4" r="2.1" fill="#5a6e82" opacity=".6"/><circle cx="26" cy="8.8" r="1.6" fill="#e8eff5" opacity=".55"/><circle cx="29.4" cy="10.6" r="1.2" fill="#e8eff5" opacity=".45"/><circle cx="24.6" cy="6" r="1.1" fill="#e8eff5" opacity=".4"/></g><g transform="translate(-1.2 1.6) rotate(-38 18 22)"><path d="M8.2 15.3L25 16.4L24 17L7 16.1Z" fill="#3a4f66"/><path d="M7 16.1L24 17V23L7 23.9Z" fill="#131a24"/><path d="M9 17.4L22.6 18" stroke="#fff" stroke-opacity=".28" stroke-width=".8" stroke-linecap="round"/><ellipse cx="7" cy="20" rx="1.6" ry="3.9" fill="#26374a"/><path d="M14 18.4L21.4 18.8V21.6L14 22Z" fill="#63b9ec"/><path d="M14.4 18.9L21 19.2" stroke="#fff" stroke-opacity=".6" stroke-width=".5"/><circle cx="10.6" cy="20.3" r="1" fill="#beee11"/><path d="M24 17.6L30 18.6V21.4L24 22.4Z" fill="#0b1016"/><path d="M24 17.6L24.9 17L30.6 18.1L30 18.6Z" fill="#3a4f66"/><ellipse cx="30" cy="20" rx=".7" ry="1.4" fill="#26374a"/></g></g></svg>
+      <span>VAPOR</span>
+    </button>
+    <nav class="mnav" aria-label="Main">
+      <button class="on" data-narr>STORE</button>
+      <button data-narr>COMMUNITY</button>
+      <button data-narr>ABOUT</button>
+      <button data-narr>SUPPORT</button>
+    </nav>
+    <div class="mright"><button class="install" data-narr>Install VAPOR</button><button class="lnk" data-narr>sign in</button>|<button class="lnk" data-narr>language ▾</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="snav">
+    <div class="snav-links">
+      <button data-narr>Browse ▾</button>
+      <button data-narr>Recommendations ▾</button>
+      <button data-narr>Categories ▾</button>
+      <button data-narr>Hardware ▾</button>
+    </div>
+  </div>
+</div>
+
+<section class="band">
+  <div class="wrap band-in">
+    <div class="mission">
+      <span class="m-label">FIND THE ORIGINAL</span>
+      <div class="m-target">Needle In A Haystack Simulator</div>
+      <div class="m-sub">Studio Bitdot · Polden Publishing · Q4 2026 · the one from the clip</div>
+    </div>
+    <dl class="stats">
+      <div><dt>Wrong picks</dt><dd id="w">0</dd></div>
+      <div><dt>Best</dt><dd id="best">—</dd></div>
+    </dl>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="results" aria-label="Search results">
+      <div class="qbar">
+        <span class="query">“needle in a haystack”</span>
+        <span class="sortwrap"><label for="sort">Sort by</label>
+          <select id="sort">
+            <option value="rel">Relevance</option>
+            <option value="date">Release Date</option>
+            <option value="name">Name</option>
+            <option value="price">Lowest Price</option>
+            <option value="orig">Originality</option>
+          </select></span>
+      </div>
+      <div class="count" id="count"></div>
+      <div id="list" class="list"></div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap"><p>This is a shitpost. VAPOR is a parody storefront, not affiliated with Valve, Steam, Nas Nakarus, Studio Bitdot or Polden Publishing. Every title here is made up except the one you are looking for, <em>Needle In A Haystack Simulator</em> by Studio Bitdot. <a href="https://store.steampowered.com/app/5159870/Needle_In_A_Haystack_Simulator/" target="_blank" rel="noopener">See the real game on Steam ↗</a> · Play again at <a href="https://haystack.jethachan.net" target="_blank" rel="noopener">haystack.jethachan.net</a>.</p></div>
+</footer>
+
+<div class="bigclock paused" id="bigclock" aria-hidden="true"><div class="num" id="clocknum">0.0</div><div class="lbl">SECONDS IN THE HAYSTACK</div></div>
+
+<div class="scrim" id="intro">
+  <div class="modal intro" role="dialog" aria-modal="true" aria-labelledby="introh">
+    <div class="tweet">
+      <a href="https://x.com/NasNakarus/status/2091156855774974333" target="_blank" rel="noopener" title="See the post on X">
+        <img src="assets/tweet.png" width="640" height="557" alt="Nas (@NasNakarus) on X, 22 August 2026: “i made a game where you literally have to find a needle in a haystack. the catch is there are 5,000,000 pieces of hay and only 1 needle.” With a 26-second video of a giant haystack. 54M views.">
+      </a>
+    </div>
+    <div class="intro-body">
+      <span class="m-label" style="align-self:flex-start">FIND THE ORIGINAL</span>
+      <h2 id="introh">One game went viral. Thirty showed up.</h2>
+      <p>On 22 August Nas Nakarus of Studio Bitdot posted a 26-second clip: one needle, 5,000,000 pieces of hay. Within a month, searching the store for it turned up a page of look-alikes.</p>
+      <p class="lamp">The games industry has a <b>cloning problem</b> and a <b>discovery problem</b>. Here they are as one game.</p>
+      <button class="green big" id="start">Can you find the original game?</button>
+      <p class="disclaim">This is a shitpost. I’m not affiliated with Nas Nakarus, Studio Bitdot or Polden Publishing in any way, or with Valve. Every other game here is made up.</p>
+    </div>
+  </div>
+</div>
+<div class="scrim" id="result" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resh">
+    <div class="res-head"><span class="verdict" id="verdict">FOOLED</span><button class="x" id="resclose" aria-label="Close">×</button></div>
+    <div class="res-body">
+      <h2 id="resh"></h2>
+      <p id="resp"></p>
+      <figure class="shot"><img id="shot" alt="Your result, as a screenshot of the VAPOR search"><figcaption id="shotcap">Drawing your screenshot…</figcaption></figure>
+      <div class="share" id="share"></div>
+      <div class="res-act"><button class="green" id="retry">Try again</button><button class="btn" id="keep">Keep looking</button></div>
+      <p class="home">Send people to <a href="https://haystack.jethachan.net" target="_blank" rel="noopener">haystack.jethachan.net</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="narr" id="narr" hidden role="status" aria-live="polite"><span class="who">NARRATOR</span><span id="narrtext"></span><span class="more">(click to continue)</span></div>
+
+<div class="toast off" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+const HOME_URL="https://haystack.jethachan.net";
+const REAL_URL="https://store.steampowered.com/app/5159870/Needle_In_A_Haystack_Simulator/";
+/* Generated capsule art, keyed by game id. build.py fills this in; anything missing falls back to the SVG below. */
+const CAPSULES=window.HAYSTACK_CAPSULES||{};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(seed){let t=seed>>>0;return()=>{t+=0x6D2B79F5;let r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return((r^r>>>14)>>>0)/4294967296;};}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const reduceMotion=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- data ---------- */
+const TBA=99999999, Q4=20261231;
+const ORIGINAL={id:"original", title:"Needle In A Haystack Simulator", art:"sky", date:"Q4 2026", sd:Q4, price:null, tags:["Simulation","Co-op"]};
+const CLONES=[
+  {id:"lowercase-l", title:"Needle ln A Haystack Simulator", art:"sky", date:"Q4 2026", sd:Q4, price:null, tags:["Simulation","Co-op"]},
+  {id:"capital-i", title:"Needle In A Haystack SimuIator", art:"sky", date:"Q4 2026", sd:Q4, price:null, tags:["Simulation","Co-op"]},
+  {id:"sim-demo", title:"Needle In A Haystack Simulator Demo", art:"sky", date:"Sep 16, 2026", sd:20260916, price:"Free", tags:["Simulation","Free"]},
+  {id:"sim-tm", title:"Needle In A Haystack Simulator™", art:"sky", date:"2026", sd:Q4, price:null, tags:["Simulation"]},
+  {id:"sim-2", title:"Needle In A Haystack Simulator 2", art:"sky", date:"To be announced", sd:TBA, price:null, tags:["Simulation","Co-op"]},
+  {id:"sim-original", title:"Needle In A Haystack Simulator (Original)", art:"sky", date:"Q4 2026", sd:Q4, price:null, tags:["Simulation"]},
+  {id:"simulater", title:"Needle In A Haystack Simulater", art:"sky", date:"Sep 24, 2026", sd:20260924, price:0.99, tags:["Simulation","Casual"]},
+  {id:"the-haystack", title:"Needle In The Haystack Simulator", art:"sky", date:"Q1 2027", sd:20270331, price:null, tags:["Simulation","Co-op"]},
+  {id:"hay-stack", title:"Needle In A Hay Stack Simulator", art:"sky", date:"Oct 2, 2026", sd:20261002, price:2.99, tags:["Simulation","Casual"]},
+  {id:"the-original", title:"Needle In A Haystack Simulator: The Original", cap:"Needle In A Haystack Simulator", sub:"THE ORIGINAL", art:"sky", date:"Coming soon", sd:TBA-1, price:null, tags:["Simulation"]},
+  {id:"neeedle", title:"Neeedle In A Haystack Simulator", art:"sky", date:"Q4 2026", sd:Q4, price:null, tags:["Simulation","Co-op"]},
+  {id:"sim-vr", title:"Needle In A Haystack Simulator VR", art:"sky", date:"To be announced", sd:TBA, price:null, tags:["Simulation","VR"]},
+  {id:"sim-sim", title:"Needle In A Haystack Simulator Simulator", art:"sky", date:"Coming soon", sd:TBA-1, price:null, tags:["Simulation"]},
+  {id:"plain", title:"Needle In A Haystack", art:"cartoon", date:"Sep 30, 2026", sd:20260930, price:null, tags:["Simulation","Co-op","Casual"]},
+  {id:"plain-demo", title:"Needle In A Haystack Demo", art:"cartoon", date:"Sep 16, 2026", sd:20260916, price:"Free", tags:["Simulation","Free","Casual"]},
+  {id:"barn", title:"The Needle In The Haystack", art:"barn", date:"To be announced", sd:TBA, price:null, tags:["Simulation","Co-op"]},
+  {id:"queen", title:"A Needle In A Haystack: The Queen's Needle", cap:"A Needle In A Haystack", sub:"THE QUEEN'S NEEDLE", art:"medieval", date:"2026", sd:Q4, price:null, tags:["Co-op","Medieval"]},
+  {id:"story", title:"Story of The Needle", art:"story", date:"Q4 2026", sd:Q4, price:null, tags:["Story Rich","Simulation"]},
+  {id:"coop-hunt", title:"CO-OP Needle Hunt: A Haystack Challenge", cap:"Needle Hunt", sub:"A HAYSTACK CHALLENGE", art:"coop", date:"Sep 25, 2026", sd:20260925, price:null, tags:["Co-op","Multiplayer"]},
+  {id:"sheep", title:"Needle In A Haystack - A Time For Sheep", sub:"A TIME FOR SHEEP", art:"label", date:"Sep 19, 2026", sd:20260919, price:{p:5.99,d:10}, thumbs:true, tags:["Casual"]},
+  {id:"sorting", title:"A Needle In A Haystack: Sorting Simulator", cap:"A Needle In A Haystack", sub:"SORTING SIMULATOR", art:"sorting", date:"Sep 25, 2026", sd:20260925, price:null, tags:["Puzzle","Casual","Simulation"]},
+  {id:"billion", title:"Needle In A Billion Haystacks", art:"field", date:"Oct 29, 2026", sd:20261029, price:null, tags:["Simulation","Action"]},
+  {id:"goat", title:"Needle In A Haystack: Goat Edition", sub:"GOAT EDITION", art:"label", date:"Sep 12, 2026", sd:20260912, price:3.99, thumbs:true, tags:["Casual","Simulation"]},
+  {id:"find", title:"Find The Needle Simulator", cap:"Find The Needle", sub:"SIMULATOR", art:"coop", date:"Sep 10, 2026", sd:20260910, price:"Free", tags:["Automation","Free","Simulation"]},
+  {id:"hay-five", title:"Hay! Five Million!", art:"cartoon", date:"2026", sd:Q4, price:null, tags:["Casual"]},
+  {id:"dlc", title:"Haystack Simulator - Needle DLC", cap:"Haystack Simulator", sub:"NEEDLE DLC", art:"sky", date:"Sep 20, 2026", sd:20260920, price:1.99, tags:["DLC","Simulation"]},
+  {id:"tycoon", title:"Needle In A Haystack Tycoon", art:"barn", date:"Early Access", sd:20260901, price:9.99, tags:["Simulation","Early Access"]},
+  {id:"royale", title:"Needle In A Haystack Battle Royale", cap:"Needle In A Haystack", sub:"BATTLE ROYALE", art:"coop", date:"Sep 22, 2026", sd:20260922, price:"Free to Play", tags:["Multiplayer","Free","Action"]},
+  {id:"idle", title:"Needle In A Haystack Idle", art:"cartoon", date:"Sep 21, 2026", sd:20260921, price:"Free", tags:["Casual","Free","Idle"]},
+  {id:"needlestack", title:"Needle In A Needlestack", art:"story", date:"Q4 2026", sd:Q4, price:null, tags:["Puzzle","Simulation"]}
+];
+[ORIGINAL,...CLONES].forEach(g=>{g.tags=g.tags.concat(["Hay"]);});
+const ALL=new Map([ORIGINAL,...CLONES].map(g=>[g.id,g]));
+
+/* ---------- fallback capsule art (artwork + name + subtitle only) ---------- */
+const CW=184, CH=69;
+function bands(cols){const h=CH/cols.length;return cols.map((c,i)=>`<rect x="0" y="${(i*h).toFixed(2)}" width="${CW}" height="${(h+.6).toFixed(2)}" fill="${c}"/>`).join("");}
+function hayPile(r,cx,by,w,h,n,base="#c9912f"){
+  const hw=w/2, cols=["#e9bd52","#f6d77a","#b98126","#fff0a8"], p=cols.map(()=> "");
+  for(let i=0;i<n;i++){
+    const u=r()*2-1, x=cx+u*hw*.95, top=by-h*(1-u*u), y=by-(by-top)*r();
+    const a=(r()-.5)*2.4+(r()<.5?0:Math.PI), len=4+r()*7, k=Math.floor(r()*cols.length);
+    p[k]+=`M${x.toFixed(1)} ${y.toFixed(1)}l${(Math.cos(a)*len).toFixed(1)} ${(Math.sin(a)*len).toFixed(1)}`;
+  }
+  return `<path d="M${cx-hw} ${by}Q${cx} ${by-h*2} ${cx+hw} ${by}Z" fill="${base}"/>`+
+    cols.map((c,i)=>p[i]?`<path d="${p[i]}" stroke="${c}" stroke-width="1" stroke-linecap="round" fill="none"/>`:"").join("");
+}
+function hayField(r,n){
+  const cols=["#e9bd52","#f6d77a","#b98126","#fff0a8"], p=cols.map(()=> "");
+  for(let i=0;i<n;i++){const x=r()*CW,y=r()*CH,a=r()*Math.PI,len=5+r()*9,k=Math.floor(r()*4);
+    p[k]+=`M${x.toFixed(1)} ${y.toFixed(1)}l${(Math.cos(a)*len).toFixed(1)} ${(Math.sin(a)*len).toFixed(1)}`;}
+  return cols.map((c,i)=>`<path d="${p[i]}" stroke="${c}" stroke-width="1.1" stroke-linecap="round" fill="none"/>`).join("");
+}
+function goat(x,by,c="#f2efe8"){return `<path d="M${x-9} ${by}v-8M${x-4} ${by}v-8M${x+5} ${by}v-8M${x+9} ${by}v-8" stroke="#5b4a3a" stroke-width="1.6"/><ellipse cx="${x}" cy="${by-12}" rx="12" ry="6" fill="${c}"/><ellipse cx="${x+13}" cy="${by-18}" rx="4.6" ry="3.5" fill="${c}"/><path d="M${x+11} ${by-21}q-2 -6 -6 -6M${x+14} ${by-21}q0 -6 -3 -7" stroke="#8a7a66" stroke-width="1.2" fill="none"/><circle cx="${x+14.6}" cy="${by-19}" r=".8" fill="#222"/>`;}
+function castle(x,by,c){return `<path d="M${x} ${by}v-26h4v-4h3v4h3v-4h3v4h4v26zM${x+18} ${by}v-18h14v18zM${x+32} ${by}v-32h4v-4h3v4h3v-4h3v4h4v32z" fill="${c}"/>`;}
+function wrapCaps(t,max,upper=true){
+  const words=(upper?t.toUpperCase():t).split(" "), lines=[]; let cur="";
+  for(const w of words){ if(cur && (cur+" "+w).length>max){lines.push(cur);cur=w;} else cur=cur?cur+" "+w:w; }
+  if(cur)lines.push(cur); return lines;
+}
+function textBlock(lines,{x,top,boxW,boxH,lh=1.02,ratio=.62,font,fill,stroke,anchor="middle",maxSize=26}){
+  const longest=Math.max(...lines.map(l=>l.length));
+  const size=Math.min(maxSize,boxH/(lines.length*lh),boxW/(longest*ratio));
+  const used=size*lh*lines.length, y0=top+(boxH-used)/2;
+  return lines.map((l,i)=>`<text x="${x}" y="${(y0+size*(.86+i*lh)).toFixed(1)}" font-family="${font}" font-size="${size.toFixed(1)}" text-anchor="${anchor}" fill="${fill}" stroke="${stroke}" stroke-width="${(size/5.5).toFixed(2)}" paint-order="stroke" stroke-linejoin="round">${esc(l)}</text>`).join("");
+}
+function subLine(txt,x,y,fill,stroke){return txt?`<text x="${x}" y="${y}" font-family="Barlow Semi Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="9" letter-spacing="1.2" text-anchor="middle" fill="${fill}" stroke="${stroke}" stroke-width="2" paint-order="stroke">${esc(txt)}</text>`:"";}
+const capCache=new Map();
+function capsuleSVG(g){
+  if(capCache.has(g.id))return capCache.get(g.id);
+  const r=rng(hash(g.title+g.art)), label=g.cap||g.title, sub=g.art==="label"?"":(g.sub||"");
+  const box={x:92,top:4,boxW:172,boxH:sub?50:61};
+  let s="";
+  switch(g.art){
+    case "sky":
+      s=bands(["#2f7fcf","#3b8bd6","#4f9dde","#6bb3e8","#8dc8ef"])+
+        `<ellipse cx="${30+r()*50}" cy="${10+r()*8}" rx="16" ry="5" fill="#fff" opacity=".5"/>`+
+        hayPile(r,142+r()*16,74,130,48,170)+
+        textBlock(wrapCaps(label,16),{...box,font:"Lilita One,Arial Black,sans-serif",fill:"#fff",stroke:"#16406e"})+
+        subLine(sub,92,64,"#fff","#16406e");
+      break;
+    case "cartoon":{
+      s=`<rect width="${CW}" height="${CH}" fill="#f4c542"/>`;
+      for(let i=0;i<12;i+=2){const a1=i/12*Math.PI*2,a2=(i+1)/12*Math.PI*2;s+=`<path d="M92 80L${(92+Math.cos(a1)*220).toFixed(0)} ${(80+Math.sin(a1)*220).toFixed(0)}L${(92+Math.cos(a2)*220).toFixed(0)} ${(80+Math.sin(a2)*220).toFixed(0)}Z" fill="#f8d56a"/>`;}
+      s+=hayPile(r,92,74,190,24,140)+
+        textBlock(wrapCaps(label,12),{...box,font:"Lilita One,Arial Black,sans-serif",fill:"#fff",stroke:"#3a2a10"});
+      break;}
+    case "barn":{
+      s=`<rect width="${CW}" height="${CH}" fill="#8f2419"/>`;
+      for(let x=12;x<CW;x+=12)s+=`<path d="M${x} 0V${CH}" stroke="#6e1a12" stroke-width="1.2"/>`;
+      s+=hayPile(r,92,74,200,16,110)+
+        textBlock(wrapCaps(label,12),{...box,font:"Rye,Georgia,serif",fill:"#fff",stroke:"#3b0d08",ratio:.72});
+      break;}
+    case "medieval":
+      s=bands(["#f3b04a","#ea9637","#d77a2b","#b85a1f","#7e3a14"])+castle(130,69,"#3a1f10")+hayPile(r,30,74,70,20,70)+
+        textBlock(wrapCaps(label,13,false),{...box,font:"MedievalSharp,Georgia,serif",fill:"#ffd36b",stroke:"#3a1f10",ratio:.55})+
+        subLine(sub,92,64,"#ffd36b","#3a1f10");
+      break;
+    case "story":
+    case "sorting":{
+      const warm=g.art==="sorting";
+      s=bands(warm?["#5a2e14","#6f3a19","#86481f","#a15a27"]:["#2d1f1a","#40291d","#5c3a22","#80522c","#b8743a"])+
+        (warm?"":`<circle cx="22" cy="16" r="8" fill="#f3e2b0" opacity=".85"/>`)+hayPile(r,150,74,80,24,90)+
+        textBlock(wrapCaps(label,13),{...box,font:"Rye,Georgia,serif",fill:"#f3e2b0",stroke:"#1d130e",ratio:.72})+
+        subLine(sub,92,64,"#f3e2b0","#1d130e");
+      break;}
+    case "coop":
+      s=`<rect width="${CW}" height="${CH}" fill="#3b1a0a"/>`+hayField(r,70)+
+        `<path d="M4 8H180L172 30L180 52H4L12 30Z" fill="#e8751a" stroke="#6b1400" stroke-width="2"/>`+
+        textBlock(wrapCaps(label,16),{x:92,top:10,boxW:160,boxH:40,font:"Luckiest Guy,Impact,sans-serif",fill:"#ffd23f",stroke:"#6b1400",ratio:.6})+
+        subLine(sub,92,63,"#ffd9a8","#3b1a0a");
+      break;
+    case "label":
+      s=`<rect width="${CW}" height="${CH}" fill="#d6a23f"/>`+hayField(r,240)+goat(24,66)+
+        `<rect x="50" y="5" width="130" height="46" fill="#111"/>`+
+        `<text x="115" y="21" font-family="Barlow Semi Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="13" letter-spacing="1" fill="#fff" text-anchor="middle">NEEDLE IN A</text>`+
+        `<text x="115" y="45" font-family="Barlow Semi Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="26" letter-spacing="1" fill="#fff" text-anchor="middle">HAYSTACK</text>`+
+        `<rect x="50" y="53" width="130" height="12" fill="#f6f0e0"/><text x="115" y="62" font-family="Barlow Semi Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="8.5" letter-spacing="1" fill="#111" text-anchor="middle">${esc(g.sub||"")}</text>`;
+      break;
+    case "field":
+      s=bands(["#8fc6ec","#a9d4f0","#c6e3f4","#dcecf5"])+`<rect y="54" width="${CW}" height="15" fill="#9dbf4f"/>`+
+        hayPile(r,30,58,40,14,40)+hayPile(r,160,58,40,14,40)+hayPile(r,96,58,30,10,20)+
+        textBlock(wrapCaps(label,14),{...box,font:"Luckiest Guy,Impact,sans-serif",fill:"#fff",stroke:"#2a5a8a",ratio:.58});
+      break;
+  }
+  const out=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CW} ${CH}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(g.title)}">${s}</svg>`;
+  capCache.set(g.id,out); return out;
+}
+function capHTML(g){return CAPSULES[g.id]?`<img src="${CAPSULES[g.id]}" alt="${esc(g.title)}" loading="lazy" decoding="async">`:capsuleSVG(g);}
+function capSrc(g){return CAPSULES[g.id]||"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(capsuleSVG(g));}
+
+/* ---------- clock ---------- */
+const clock={acc:0,start:null};
+const clockMs=()=>clock.acc+(clock.start!==null?performance.now()-clock.start:0);
+function clockRun(){if(clock.start===null&&!won)clock.start=performance.now();paintClock();}
+function clockPause(){if(clock.start!==null){clock.acc+=performance.now()-clock.start;clock.start=null;}paintClock();}
+function clockReset(){clock.acc=0;clock.start=null;paintClock();}
+const secs=ms=>(ms/1000).toFixed(1)+"s";
+function paintClock(){
+  $("#clocknum").textContent=(clockMs()/1000).toFixed(1);
+  $("#bigclock").classList.toggle("paused",clock.start===null&&!won);
+  $("#bigclock").classList.toggle("done",won);
+}
+(function tick(){if(clock.start!==null)$("#clocknum").textContent=(clockMs()/1000).toFixed(1);requestAnimationFrame(tick);})();
+
+/* ---------- state ---------- */
+let results=[], visited=new Set(), wrong=0, won=false, last=null, cardURL=null, cardBlob=null;
+const WIN_ICON=`<svg viewBox="0 0 14 14" width="14" height="14" aria-label="Windows"><rect x="0" y="0" width="6.4" height="6.4" fill="#8f98a0"/><rect x="7.6" y="0" width="6.4" height="6.4" fill="#8f98a0"/><rect x="0" y="7.6" width="6.4" height="6.4" fill="#8f98a0"/><rect x="7.6" y="7.6" width="6.4" height="6.4" fill="#8f98a0"/></svg>`;
+const THUMB=`<svg viewBox="0 0 16 16" width="16" height="16" aria-label="Positive reviews"><rect width="16" height="16" rx="2" fill="#4a8bc2"/><path d="M4 7h2v6H4zM7 13V7l2-4c1 0 1.5.6 1.3 1.6L10 6.5h2.4c.7 0 1.2.6 1 1.3l-1 4.2c-.2.6-.6 1-1.2 1z" fill="#fff"/></svg>`;
+const priceVal=p=>p===null?Infinity:(typeof p==="string"?0:(typeof p==="number"?p:p.p*(1-p.d/100)));
+function priceHTML(p){
+  if(p===null)return "";
+  if(typeof p==="string")return `<span>${esc(p)}</span>`;
+  if(typeof p==="number")return `<span>$${p.toFixed(2)}</span>`;
+  return `<span class="disc"><span class="pct">-${p.d}%</span><span class="pp"><s>$${p.p.toFixed(2)}</s><b>$${(p.p*(1-p.d/100)).toFixed(2)}</b></span></span>`;
+}
+function loadBest(){try{const v=localStorage.getItem("vapor-best");return v?JSON.parse(v):null;}catch(e){return null;}}
+function saveBest(b){try{localStorage.setItem("vapor-best",JSON.stringify(b));}catch(e){}}
+function showBest(){const b=loadBest();$("#best").textContent=b?secs(b.ms):"—";}
+let toastTimer;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.remove("off");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("off"),2800);}
+
+/* ---------- narrator ---------- */
+let navClicks=0, narrBag=[], narrTimer=null, typeTimer=null;
+const NARR=[
+  ()=>"Hey. Hey. We're not here for that.",
+  ()=>"Whoa there, champ. We're not here for that.",
+  ()=>"That's a menu, not a needle. We're not here for that.",
+  ()=>"You click that like you've got somewhere better to be. You don't. You've got hay.",
+  ()=>"Nice try. The needle isn't up there either.",
+  ()=>"Sure, go browse. The haystack will wait. (It will not wait. The clock is running.)",
+  ()=>"Our hero, distracted by a navigation bar. Tragic, really.",
+  ()=>"Hey. Eyes on the hay, pal.",
+  ()=>"We are not here for that. We are here for one (1) needle.",
+  n=>n>=3?`That's ${n} clicks on the top menu. The original has been sitting in the results this whole time.`:null,
+  ()=>"Not that. Not now. Possibly not ever.",
+  ()=>"Buddy. Pal. Friend. We're not here for that.",
+  ()=>"The narrator sighs deeply and gestures at the haystack.",
+  ()=>"You won't find it up there. You'd just find thirty more of them."
+];
+function narrate(){
+  navClicks++;
+  let line=null;
+  while(!line){ if(!narrBag.length)narrBag=shuffle(NARR.map((_,i)=>i)); line=NARR[narrBag.pop()](navClicks); }
+  const txt=$("#narrtext");
+  clearTimeout(narrTimer); clearInterval(typeTimer);
+  $("#narr").hidden=false;
+  if(reduceMotion){txt.textContent=line;}
+  else{let i=0;txt.textContent="";typeTimer=setInterval(()=>{i+=2;txt.textContent=line.slice(0,i);if(i>=line.length)clearInterval(typeTimer);},24);}
+  narrTimer=setTimeout(hideNarr,2400+line.length*40);
+}
+function hideNarr(){clearTimeout(narrTimer);clearInterval(typeTimer);$("#narr").hidden=true;}
+
+/* ---------- round ---------- */
+function newRound(startNow){
+  const pool=shuffle(CLONES.slice()).slice(0,19);
+  results=shuffle([ORIGINAL,...pool]);
+  results.forEach((g,i)=>{g.rel=g.title.toLowerCase()==="needle in a haystack"?-1:i;});
+  visited=new Set(); wrong=0; won=false; last=null;
+  $("#w").textContent="0"; $("#sort").value="rel";
+  clockReset(); window.scrollTo(0,0); render();
+  if(startNow)clockRun();
+}
+function sorted(list){
+  const k=$("#sort").value, a=list.slice();
+  if(k==="date")a.sort((x,y)=>x.sd-y.sd);
+  else if(k==="name")a.sort((x,y)=>x.title.localeCompare(y.title));
+  else if(k==="price")a.sort((x,y)=>priceVal(x.price)-priceVal(y.price));
+  else a.sort((x,y)=>x.rel-y.rel);
+  return a;
+}
+const shown=()=>sorted(results);
+function rowHTML(g){
+  return `<button class="row" data-id="${g.id}">
+    <span class="cap">${capHTML(g)}</span>
+    <span class="info"><span class="title">${esc(g.title)}</span><span class="meta">${WIN_ICON}${g.thumbs?THUMB:""}${visited.has(g.id)?'<span class="seen-tag">NOPE</span>':""}</span></span>
+    <span class="rel">${esc(g.date)}</span>
+    <span class="price">${priceHTML(g.price)}</span>
+  </button>`;
+}
+function render(){
+  const list=shown();
+  $("#list").innerHTML=list.map(rowHTML).join("");
+  $("#count").textContent=`${list.length} results match your search.`;
+}
+function pick(id){
+  const g=ALL.get(id); if(!g)return;
+  if(won){ if(last)openResult(last); return; }
+  const list=shown(), found=g===ORIGINAL;
+  let newBest=false;
+  clockPause();
+  if(found){
+    won=true; paintClock();
+    const ms=clockMs(), b=loadBest();
+    if(!b||ms<b.ms){saveBest({ms,wrong});newBest=true;}
+    showBest();
+  } else {
+    wrong++; $("#w").textContent=wrong; visited.add(id); render();
+  }
+  last={g,found,ms:clockMs(),wrong,list,newBest,total:results.length};
+  openResult(last);
+}
+
+/* ---------- result modal + screenshot ---------- */
+function loadImg(src){return new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});}
+function fitLines(x,text,maxW,maxLines){
+  const words=text.split(" "),lines=[];let cur="";
+  for(const w of words){const t=cur?cur+" "+w:w;if(x.measureText(t).width>maxW&&cur){lines.push(cur);cur=w;}else cur=t;}
+  if(cur)lines.push(cur);
+  if(lines.length>maxLines){lines.length=maxLines;let l=lines[maxLines-1];while(x.measureText(l+"…").width>maxW&&l.length)l=l.slice(0,-1);lines[maxLines-1]=l+"…";}
+  return lines;
+}
+function drawCover(x,img,dx,dy,dw,dh){
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height, s=Math.max(dw/iw,dh/ih), sw=dw/s, sh=dh/s;
+  x.drawImage(img,(iw-sw)/2,(ih-sh)/2,sw,sh,dx,dy,dw,dh);
+}
+async function makeCard(r){
+  try{await document.fonts.ready;}catch(e){}
+  const W=1200,H=675,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const COND="'Barlow Semi Condensed','Arial Narrow',Arial,sans-serif", UI="Barlow,Arial,sans-serif";
+  const hit=r.found?"#beee11":"#ff5a4a", ls=v=>{if("letterSpacing" in x)x.letterSpacing=v;};
+  x.fillStyle="#1a2433";x.fillRect(0,0,W,H);
+  x.fillStyle="#131a24";x.fillRect(0,0,W,84);
+  const logo=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent($("#logo").outerHTML));
+  if(logo)x.drawImage(logo,36,18,48,48);
+  x.textBaseline="middle";x.fillStyle="#dfe8ef";x.font=`700 40px ${COND}`;ls("4px");x.fillText("VAPOR",96,44);ls("0px");
+  x.fillStyle="#d1261c";x.fillRect(W-300,28,260,30);
+  x.fillStyle="#fff";x.font=`700 18px ${COND}`;x.textAlign="center";ls("3px");x.fillText("FIND THE ORIGINAL",W-170,44);ls("0px");x.textAlign="left";
+  x.fillStyle="#244664";x.fillRect(0,84,W,52);
+  x.fillStyle="#c7d5e0";x.font=`500 21px ${UI}`;
+  x.fillText(`needle in a haystack  ·  ${r.total} results match your search`,40,110);
+  const idx=Math.max(0,r.list.indexOf(r.g)), n=Math.min(4,r.list.length);
+  const from=Math.max(0,Math.min(idx-1,r.list.length-n)), rows=r.list.slice(from,from+n);
+  const imgs=await Promise.all(rows.map(g=>g===ORIGINAL?null:loadImg(capSrc(g))));
+  const top=156,rh=94,gap=8,lw=720,cw=Math.round(rh*462/174);
+  rows.forEach((g,k)=>{
+    const y=top+k*(rh+gap), isHit=g===r.g;
+    x.fillStyle=isHit?"#223549":"#16202d";x.fillRect(40,y,lw,rh);
+    if(g===ORIGINAL){
+      // the shared image never shows the real game's art
+      x.fillStyle="#000";x.fillRect(40,y,cw,rh);
+      x.fillStyle="#fff";x.font=`700 44px ${COND}`;x.textAlign="center";x.textBaseline="middle";ls("4px");
+      x.fillText("CENSORED",40+cw/2,y+rh/2+2);ls("0px");x.textAlign="left";
+    } else if(imgs[k])drawCover(x,imgs[k],40,y,cw,rh);
+    x.textBaseline="alphabetic";x.fillStyle=isHit?"#ffffff":"#c7d5e0";x.font=`500 23px ${UI}`;
+    fitLines(x,g.title,lw-cw-40,2).forEach((l,i)=>x.fillText(l,56+cw,y+34+i*27));
+    x.fillStyle="#8f98a0";x.font=`400 17px ${UI}`;x.fillText(g.date,56+cw,y+rh-12);
+    if(isHit){x.strokeStyle=hit;x.lineWidth=5;x.strokeRect(42.5,y+2.5,lw-5,rh-5);
+      x.fillStyle=hit;x.beginPath();x.moveTo(lw+50,y+rh/2);x.lineTo(lw+72,y+rh/2-14);x.lineTo(lw+72,y+rh/2+14);x.closePath();x.fill();}
+  });
+  const cx=W-40;
+  x.save();x.translate(cx-170,210);x.rotate(-0.07);
+  x.font=`700 60px ${COND}`;const vt=r.found?"FOUND IT":"FOOLED", vw=x.measureText(vt).width;
+  x.strokeStyle=hit;x.lineWidth=6;x.strokeRect(-vw/2-18,-44,vw+36,86);
+  x.fillStyle=hit;x.textAlign="center";x.textBaseline="middle";x.fillText(vt,0,2);x.restore();
+  x.textAlign="right";x.textBaseline="alphabetic";
+  x.fillStyle="#ffffff";x.font=`700 150px ${COND}`;x.fillText((r.ms/1000).toFixed(1),cx,420);
+  x.fillStyle="#e8b54a";x.font=`700 20px ${COND}`;ls("5px");x.fillText("SECONDS",cx,452);ls("0px");
+  x.fillStyle="#c3d0dc";x.font=`500 24px ${UI}`;
+  if(r.found){x.fillText(r.wrong?`after ${r.wrong} attempt${r.wrong===1?"":"s"}`:"first try. suspicious.",cx,500);}
+  else{x.fillText(`wrong pick #${r.wrong}`,cx,500);x.fillText("it said it was the original.",cx,532);}
+  x.fillStyle="#131a24";x.fillRect(0,H-68,W,68);
+  x.textBaseline="middle";x.textAlign="left";x.fillStyle="#c3d0dc";x.font=`500 24px ${UI}`;
+  x.fillText(r.found?"Can you beat it?":"Can you find the real one?",40,H-34);
+  x.textAlign="right";x.fillStyle="#e8b54a";x.font=`700 32px ${COND}`;x.fillText("haystack.jethachan.net",cx,H-34);
+  return c;
+}
+const svgIcon=body=>`<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">${body}</svg>`;
+const ICONS={
+  X:svgIcon(`<path d="M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9zm-1.3 19.5h2L6.5 3.2H4.3z"/>`),
+  Bluesky:svgIcon(`<path d="M12 11C10 7 6.5 3.5 3.5 2.8 2 2.5 1 3 1 4.8c0 1.5.5 5 1.2 6 1.2 1.8 3.5 2 5.5 1.7-3 .6-5.5 2.2-3 5 2.8 3 5 .8 6.2-2.2L12 13l1.1 2.3c1.2 3 3.4 5.2 6.2 2.2 2.5-2.8 0-4.4-3-5 2 .3 4.3.1 5.5-1.7.7-1 1.2-4.5 1.2-6 0-1.8-1-2.3-2.5-2C17.5 3.5 14 7 12 11Z"/>`),
+  Threads:svgIcon(`<path d="M16.3 11.2c-.2-2.7-1.8-4.1-4.2-4.1-1.6 0-2.9.7-3.6 1.9l1.5 1c.5-.8 1.2-1.1 2.1-1.1 1.1 0 1.9.5 2.1 1.6-.6-.1-1.3-.2-2-.2-2.4 0-4 1.2-3.9 3.1.1 1.8 1.6 2.9 3.5 2.8 2.2-.1 3.6-1.5 3.9-3.6.7.4 1.1 1 1.3 1.7.4 1.3-.1 2.9-1.5 4-1.2 1-2.7 1.4-4.5 1.4-4 0-6.3-2.6-6.3-7.5S7 4.5 11 4.5s6 2.2 6.8 5.4l1.8-.5C18.6 5.3 15.8 2.7 11 2.7 5.8 2.7 3 6.1 3 12.2s2.8 9.4 8 9.4c2.3 0 4.2-.6 5.7-1.9 2-1.7 2.6-4 1.9-6-.4-1.2-1.2-2-2.3-2.5zm-4.2 3.9c-1 .1-1.8-.4-1.8-1.1 0-.6.5-1.3 2-1.3.6 0 1.2.1 1.8.2-.2 1.5-1 2.1-2 2.2z"/>`),
+  Reddit:svgIcon(`<path fill-rule="evenodd" d="M4 14.5a8 5.6 0 1 0 16 0a8 5.6 0 1 0-16 0ZM8.2 13.4a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0Zm4.8 0a1.4 1.4 0 1 0 2.8 0a1.4 1.4 0 1 0-2.8 0Z"/><circle cx="4.3" cy="10.8" r="1.9"/><circle cx="19.7" cy="10.8" r="1.9"/><circle cx="17.6" cy="4.2" r="1.7"/><path d="M12 9V8l1.3-4.6 3.5.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>`)
+};
+function shareText(r){
+  return r.found
+    ?`I found the original Needle In A Haystack Simulator in ${secs(r.ms)}${r.wrong?` after ${r.wrong} attempt${r.wrong===1?"":"s"}`:""}. Can you?`
+    :`Fooled by “${r.g.title}” after ${secs(r.ms)}. It said it was the original. They all do.`;
+}
+async function openResult(r){
+  const found=r.found;
+  $("#verdict").textContent=found?"FOUND IT":"FOOLED"; $("#verdict").classList.toggle("good",found);
+  $("#resh").textContent=found?"That’s the original.":`That was “${r.g.title}”.`;
+  $("#resp").innerHTML=found
+    ?`${secs(r.ms)}, ${r.wrong} attempt${r.wrong===1?"":"s"} along the way.${r.newBest?" New personal best.":""} The real one comes out Q4 2026. <a href="${REAL_URL}" target="_blank" rel="noopener">Wishlist it on Steam ↗</a>`
+    :`${secs(r.ms)} in, wrong pick #${r.wrong}. It said it was the original. They all do.`;
+  $("#keep").hidden=found;
+  $("#retry").textContent=found?"Try again":"Try again (new haystack)";
+  const text=shareText(r), enc=encodeURIComponent;
+  const links=[
+    ["X",`https://x.com/intent/post?text=${enc(text)}&url=${enc(HOME_URL)}`],
+    ["Bluesky",`https://bsky.app/intent/compose?text=${enc(text+" "+HOME_URL)}`],
+    ["Threads",`https://www.threads.net/intent/post?text=${enc(text+" "+HOME_URL)}`],
+    ["Reddit",`https://www.reddit.com/submit?url=${enc(HOME_URL)}&title=${enc(text)}`]
+  ];
+  $("#share").innerHTML=`<button id="copyimg">Copy image</button><button id="dlimg">Download PNG</button>`+
+    (navigator.canShare?`<button id="nativeshare">Share…</button>`:"")+
+    links.map(([n,u])=>`<a class="ico" href="${esc(u)}" target="_blank" rel="noopener" title="Post to ${n}" aria-label="Post to ${n}">${ICONS[n]}</a>`).join("");
+  $("#shot").removeAttribute("src"); $("#shotcap").textContent="Drawing your screenshot…";
+  $("#result").hidden=false; $("#result").scrollTop=0; window.scrollTo(0,0); $("#retry").focus({preventScroll:true});
+  cardURL=null; cardBlob=null;
+  const canvas=await makeCard(r);
+  if(last!==r)return;
+  cardURL=canvas.toDataURL("image/png"); $("#shot").src=cardURL;
+  $("#shotcap").textContent="Copy or download it, then paste it into your post. Right-click or long-press also works.";
+  canvas.toBlob(b=>{cardBlob=b;},"image/png");
+}
+function closeResult(){
+  $("#result").hidden=true;
+  if(!last)return;
+  if(last.found)newRound(true); else clockRun();
+}
+$("#share").addEventListener("click",async e=>{
+  const id=e.target.id;
+  if(id==="copyimg"){
+    try{await navigator.clipboard.write([new ClipboardItem({"image/png":cardBlob})]);toast("Image copied. Paste it into your post.");}
+    catch(err){toast("Couldn’t copy the image here. Right-click it and save it instead.");}
+  } else if(id==="dlimg"){
+    if(!cardURL)return;
+    const a=document.createElement("a");a.href=cardURL;a.download=`haystack-${last&&last.found?"found":"fooled"}.png`;document.body.appendChild(a);a.click();a.remove();
+  } else if(id==="nativeshare"){
+    try{const f=new File([cardBlob],"haystack.png",{type:"image/png"}), data={files:[f],text:shareText(last),url:HOME_URL};
+      if(navigator.canShare(data))await navigator.share(data);else await navigator.share({text:shareText(last),url:HOME_URL});
+    }catch(err){}
+  }
+});
+$("#retry").addEventListener("click",()=>{$("#result").hidden=true;newRound(true);});
+$("#keep").addEventListener("click",closeResult);
+$("#resclose").addEventListener("click",closeResult);
+$("#result").addEventListener("click",e=>{if(e.target.id==="result")closeResult();});
+
+/* ---------- events ---------- */
+$("#start").addEventListener("click",()=>{$("#intro").hidden=true;window.scrollTo(0,0);clockRun();});
+$("#list").addEventListener("click",e=>{const r=e.target.closest(".row");if(r)pick(r.dataset.id);});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape")return;
+  if(!$("#narr").hidden){hideNarr();return;}
+  if(!$("#result").hidden)closeResult();
+});
+$("#narr").addEventListener("click",hideNarr);
+document.querySelectorAll("[data-narr]").forEach(b=>b.addEventListener("click",narrate));
+$("#sort").addEventListener("change",e=>{
+  if(e.target.value==="orig"){e.target.value="rel";toast("Every developer rated their own game 100% original. Sorted by Relevance instead.");}
+  render();
+});
+$("#home").addEventListener("click",()=>{if(won)newRound(true);});
+
+showBest();
+newRound(false);
+$("#start").focus({preventScroll:true});
+})();
+</script>

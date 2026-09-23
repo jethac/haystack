@@ -1,0 +1,10 @@
+# private research notes
+RESEARCH.md
+X_POST_IAN.md
+# generation scratch
+capsules/codex-*.log
+capsules/raw/
+capsules/real/
+capsules/_*.png
+.DS_Store
+Thumbs.db
